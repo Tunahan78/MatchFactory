@@ -31,5 +31,14 @@ public class SlotModel
     public void RemoveMatchedItems(int matchedID)
     {
         // ... Kaldırma mantığı (Aşama 4'te detaylandırılacak) ...
+
+        // Eşleşen ID'ye sahip olmayan öğeleri tutan yeni bir liste oluştur
+        List<ItemData> newItemsList = itemsInSlot
+            .Where(item => item.ID != matchedID)
+            .ToList();
+
+        // Mevcut listeyi, temizlenmiş yeni listeyle değiştir.
+        itemsInSlot = newItemsList;
     }
+    
 }
