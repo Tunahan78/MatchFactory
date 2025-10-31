@@ -37,21 +37,19 @@ public class SimpleItemSpawner : MonoBehaviour
             // 1. Rastgele bir ItemData seç
             ItemData selectedData = itemTypes[Random.Range(0, itemTypes.Length)];
 
-            // 2. Item Prefab'ini oluştur (Prefab, ItemData'nın içinde tanımlı)
-            // ItemView ve Collider'ın prefab'e bağlı olduğundan emin olun.
-            GameObject newItemGO = Instantiate(
-                selectedData.Prefab, 
-                GetRandomSpawnPosition(), 
-                Random.rotation // Başlangıçta rastgele bir dönme açısı veriyoruz
-            );
+           ItemView itemView = ObjectPooler.Instance.GetItem(selectedData.ID);
 
-            // 3. ItemView'i al ve Data'yı bağla! (Bağımlılık Enjeksiyonu)
-            ItemView itemView = newItemGO.GetComponent<ItemView>();
             if (itemView != null)
             {
-                // ItemView'in Initialize metodu ile veriyi atıyoruz.
-                itemView.Initialize(selectedData); 
+                // Havuzdan gelen Item'ın pozisyonunu ayarla
+                itemView.transform.position = GetRandomSpawnPosition();
+                itemView.transform.rotation = Random.rotation;
+
+                // ZATEN POOLER'DA İLK KEZ BAŞLATILDI, ANCAK YENİDEN BAŞLATMA GEREKEBİLİR
+                // Örneğin: Item'ın slota özel ayarlarını sıfırlamak için bir Reset metodu çağrılabilir.
+                // itemView.ResetForBoard(); 
             }
+
             else
             {
                 Debug.LogError($"HATA: Spawn edilen prefab'de ItemView bileşeni bulunamadı: {selectedData.ItemName}. Lütfen prefab'i kontrol edin.");

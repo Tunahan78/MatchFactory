@@ -1,6 +1,7 @@
 // Scripts/Manager/SlotManager.cs
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public class SlotManager : MonoBehaviour
@@ -43,7 +44,9 @@ public class SlotManager : MonoBehaviour
     // Yeni: MatchPresenter'dan gelen eşleşme sinyalini işleyen metot
     public void HandleMatchFound(int matchedID)
     {
-        // 1. Görsel temizliği başlat (Aşama 5)
+        // YENİ: GameController'a eşleşme ID'sini bildir!
+        GameController.Instance.OnMatchSuccess(matchedID);
+        
         // Eşleşen ItemView'leri bul ve yok etme sürecini başlat
         DestroyMatchedViews(matchedID);
 
@@ -78,7 +81,13 @@ public class SlotManager : MonoBehaviour
             targetSlot.PlaceItem(item);
 
             // Item'ın görsel olarak kayma animasyonu/geçişi burada tetiklenebilir.
+            float moveDuration = 0.2f;
+
+            // DOTween: Item'ı yeni slotun (targetSlot.itemAnchor'ın) pozisyonuna yumuşakça kaydır.
+            // PlaceItem metodu zaten SetParent yaptığı için, DOLocalMove kullanıyoruz.
+            item.transform.DOLocalMove(Vector3.zero, moveDuration);
         }
+        
     }
     
 
@@ -89,14 +98,15 @@ public class SlotManager : MonoBehaviour
             if (slotView.IsOccupied && slotView.CurrentItem.Data.ID == matchedID)
             {
                 // SlotView'den ItemView referansını al
-                ItemView itemToDestroy = slotView.CurrentItem;
+                ItemView itemToReturn = slotView.CurrentItem;
 
                 // Slot'un referansını temizle (önemli)
                 slotView.RemoveItem();
 
-                // ItemView'in yok olma/pool'a dönme animasyonunu başlat
-                // Şimdilik basitçe Destroy() kullanıyoruz (Aşama 6'da Object Pooling'e geçilebilir).
-                Destroy(itemToDestroy.gameObject);
+                // ItemView'in yok olma/pool'a dönme animasyonunu başlat ileride yapılıcak
+
+                ObjectPooler.Instance.ReturnToPool(itemToReturn);
+               
             }
             
         }

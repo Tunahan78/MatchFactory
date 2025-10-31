@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 
 public class SlotView : MonoBehaviour
@@ -12,14 +13,21 @@ public class SlotView : MonoBehaviour
     public void PlaceItem(ItemView item)
     {
         CurrentItem = item;
-        
+
         item.PrepareForSlot();
         // Hiyerarşi ve Konum Ayarlaması
         item.transform.SetParent(itemAnchor); // SetParent kullanmak daha iyidir
-        item.transform.localPosition = Vector3.zero; 
-        
+
+        float duration = 0.25f; // Hareket süresi (saniye)
+
+        // DOTween: Item'ı 0.25 saniyede Anchor pozisyonuna taşı.
+        // 'Ease.OutBack' gibi bir eğri, hareketi daha canlı (sanki geri yaylanıyor gibi) yapar.
+        item.transform.DOLocalMove(Vector3.zero, duration)
+            .SetEase(Ease.OutSine); // Smooth bir eğri 
+
         item.SetSelectionHighlight(false);
     }
+    
 
     // Item'ı yuvadan kaldıran metot
     public void RemoveItem()

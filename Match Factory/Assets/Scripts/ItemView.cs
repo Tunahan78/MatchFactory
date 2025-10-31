@@ -45,8 +45,9 @@ public class ItemView : MonoBehaviour
         if (itemRigidbody != null)
         {
             itemRigidbody.isKinematic = true;
-             // itemRigidbody.linearVelocity = Vector3.zero;
-            //  itemRigidbody.angularVelocity = Vector3.zero;
+
+              // itemRigidbody.linearVelocity = Vector3.zero;
+              // itemRigidbody.angularVelocity = Vector3.zero;
         }
 
         // 3. Boyutunu küçült (Örnek boyut, ihtiyaca göre ayarlanmalı)
